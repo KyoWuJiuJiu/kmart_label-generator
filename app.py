@@ -31,8 +31,13 @@ def fill_label_table(table, data_row):
             else:
                 value = str(data_row.get(source, ""))
 
-            # 强制写入内容，替代 run 操作，确保不会因段落结构问题漏填
-            target_cell.text = value
+            # 徹底清空 cell 中所有段落
+            for p in target_cell.paragraphs:
+                target_cell._element.remove(p._element)
+
+            # 添加新的段落并写入内容
+            new_paragraph = target_cell.add_paragraph()
+            new_paragraph.add_run(value)
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
@@ -69,7 +74,6 @@ if uploaded_excel:
         doc = Document(TEMPLATE_PATH)
         big_table_template = doc.tables[0]
 
-        # 找到模板小表格
         template_table = None
         for row in big_table_template.rows:
             for i, cell in enumerate(row.cells):
