@@ -7,7 +7,7 @@ import os
 import copy
 
 FIELD_MAP = {
-    "No": "Assortment Breakdown",
+    "No. of assort.:": "Assortment Breakdown",
     "FOB port / price:": ("FOB Point", "FOB NB"),
     "Sample send date:": "=today()",
     "Item No:": "ITEM#",
@@ -21,9 +21,6 @@ def fill_label_table(table, data_row):
         title = row.cells[0].text.strip()
         target_cell = row.cells[1]
 
-        if target_cell.text.strip():
-            continue
-
         if title in FIELD_MAP:
             source = FIELD_MAP[title]
             if source == "=today()":
@@ -34,16 +31,12 @@ def fill_label_table(table, data_row):
             else:
                 value = str(data_row.get(source, ""))
 
-            p = target_cell.paragraphs[0]
-            if p.runs:
-                p.runs[0].text = value
-            else:
-                p.add_run(value)
+            # 强制写入内容，替代 run 操作，确保不会因段落结构问题漏填
+            target_cell.text = value
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
-
     new_table = copy.deepcopy(table)
     doc._body._element.append(copy.deepcopy(OxmlElement('w:br')))
     doc._body._element.append(new_table._element)
@@ -97,7 +90,6 @@ if uploaded_excel:
         labels_per_table = sum(1 for row in big_table_template.rows for i in [0,2] if len(row.cells) > i)
         num_full_tables = (rows_needed + labels_per_table - 1) // labels_per_table
 
-        # 开始构造多页 big_table
         for t in range(num_full_tables):
             new_big_table = copy.deepcopy(big_table_template)
             doc._body._element.append(new_big_table._element)
