@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from docx import Document
+from docx.shared import RGBColor, Pt
 from io import BytesIO
 from datetime import date
 import os
@@ -31,13 +32,18 @@ def fill_label_table(table, data_row):
             else:
                 value = str(data_row.get(source, ""))
 
-            # 徹底清空 cell 中所有段落
+            # 清空 cell 中所有段落元素
             for p in target_cell.paragraphs:
                 target_cell._element.remove(p._element)
 
-            # 添加新的段落并写入内容
+            # 添加新的段落并写入内容（强制设置字体为黑色）
             new_paragraph = target_cell.add_paragraph()
-            new_paragraph.add_run(value)
+            run = new_paragraph.add_run(value)
+            run.font.color.rgb = RGBColor(0, 0, 0)
+            run.font.size = Pt(10)
+
+            # 调试信息输出（可在部署环境中用 log 方式替换）
+            print(f"[DEBUG] 标题: {title}, 写入值: {value}, 写入后内容: {target_cell.text}")
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
