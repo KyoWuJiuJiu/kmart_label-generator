@@ -7,10 +7,10 @@ import os
 import copy
 
 FIELD_MAP = {
-    "No. of assort.": "Assortment Breakdown",
+    "No. of assort.:": "Assortment Breakdown",
     "FOB port / price:": ("FOB Point", "FOB NB"),
     "Sample send date:": "=today()",
-    "Item No": "ITEM#",
+    "Item No:": "ITEM#",
     "Description:": "Item Description"
 }
 
