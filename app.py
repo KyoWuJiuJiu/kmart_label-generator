@@ -87,7 +87,7 @@ if uploaded_excel:
         st.error(f"Excel 缺少必需列：{', '.join(missing_cols)}")
         st.stop()
 
-    TEMPLATE_PATH = "/mnt/data/Kmart Buy Trip Label Template.docx"  # Path for template in Streamlit Cloud
+    TEMPLATE_PATH = "Kmart Buy Trip Label Template.docx"  # Path for template in Streamlit Cloud
     if not os.path.exists(TEMPLATE_PATH):
         st.error("未找到固定模板文件")
     else:
