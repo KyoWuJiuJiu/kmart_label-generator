@@ -69,7 +69,7 @@ if uploaded_excel:
         st.error("Excel 缺少必要列：" + ", ".join(missing_cols))
         st.stop()
 
-    TEMPLATE_PATH = "/mnt/data/Kmart Buy Trip Label Template.docx"
+    TEMPLATE_PATH = "Kmart Buy Trip Label Template.docx"
     if not os.path.exists(TEMPLATE_PATH):
         st.error("未找到固定模板文件")
     else:
