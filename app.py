@@ -9,16 +9,18 @@ import copy
 import re
 
 FIELD_ORDER = [
-    "Assortment Breakdown",
-    ("FOB Point", "FOB NB"),
-    "",  # FF due date - skipped
-    "=today()",
-    "",  # Sample Status - skipped
-    "",  # Order No. - skipped
-    "ITEM#",
-    "",  # Keycode - skipped
-    "Item Description",
-    "",  # Sample Purpose / Remarks - skipped
+    "",                                 # Supplier - static text
+    "Assortment Breakdown",             # No. of assort.
+    "",                                 # CGA Merchandiser
+    ("FOB Point", "FOB NB"),            # FOB port / price
+    "",                                 # Order No.
+    "",                                 # FF due date
+    "ITEM#",                            # Item No
+    "=today()",                         # Sample send date
+    "",                                 # Keycode
+    "",                                 # Sample Status
+    "Item Description",                 # Description
+    ""                                  # Sample Purpose / Remarks
 ]
 
 def fill_label_table(table, data_row):
