@@ -28,10 +28,19 @@ def fill_label_table(table, data_row):
         if source == "=today()":
             value = str(date.today())
         elif isinstance(source, tuple):
-            values = [str(data_row.get(col, "")) for col in source]
+            values = []
+            for col in source:
+                cell_value = data_row.get(col, "")
+                if isinstance(cell_value, float) and cell_value.is_integer():
+                    cell_value = str(int(cell_value))
+                values.append(str(cell_value))
             value = " / ".join(values)
         else:
-            value = str(data_row.get(source, ""))
+            cell_value = data_row.get(source, "")
+            if isinstance(cell_value, float) and cell_value.is_integer():
+                value = str(int(cell_value))
+            else:
+                value = str(cell_value)
 
         if target_cell.paragraphs:
             para = target_cell.paragraphs[0]
