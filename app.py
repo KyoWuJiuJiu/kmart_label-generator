@@ -8,35 +8,32 @@ import os
 import copy
 import re
 
-FIELD_MAP = {
-    "No. of assort.:": "Assortment Breakdown",
-    "FOB port / price:": ("FOB Point", "FOB NB"),
-    "Sample send date:": "=today()",
-    "Item No:": "ITEM#",
-    "Description:": "Item Description"
-}
-
-# 标题常规化函数
-def normalize(text):
-    return re.sub(r"[\s:：]+", "", text.strip().lower())
-
-# 构建常规化key到原始key的映射
-NORMALIZED_MAP = {normalize(k): k for k in FIELD_MAP.keys()}
-
-def resolve_title_key(title):
-    key = normalize(title)
-    return NORMALIZED_MAP.get(key, None)
+FIELD_ORDER = [
+    "Assortment Breakdown",
+    ("FOB Point", "FOB NB"),
+    "",  # FF due date - skipped
+    "=today()",
+    "",  # Sample Status - skipped
+    "",  # Order No. - skipped
+    "ITEM#",
+    "",  # Keycode - skipped
+    "Item Description",
+    "",  # Sample Purpose / Remarks - skipped
+]
 
 def fill_label_table(table, data_row):
+    field_idx = 0
     for row in table.rows:
-        if len(row.cells) < 2:
-            continue
-        title = row.cells[0].text.strip()
-        target_cell = row.cells[1]
-
-        matched_key = resolve_title_key(title)
-        if matched_key:
-            source = FIELD_MAP[matched_key]
+        for vi in [1, 3]:  # Fill column 2 and 4
+            if len(row.cells) <= vi:
+                continue
+            target_cell = row.cells[vi]
+            if field_idx >= len(FIELD_ORDER):
+                continue
+            source = FIELD_ORDER[field_idx]
+            field_idx += 1
+            if source == "":
+                continue  # skip empty mapping
             if source == "=today()":
                 value = str(date.today())
             elif isinstance(source, tuple):
@@ -45,16 +42,12 @@ def fill_label_table(table, data_row):
             else:
                 value = str(data_row.get(source, ""))
 
-            # 清除段落后重写
             for p in target_cell.paragraphs:
                 target_cell._element.remove(p._element)
-
             new_paragraph = target_cell.add_paragraph()
             run = new_paragraph.add_run(value)
             run.font.color.rgb = RGBColor(0, 0, 0)
             run.font.size = Pt(10)
-
-            print(f"[DEBUG] 标题: {title}, 匹配字段: {matched_key}, 写入值: {value}, 写入后内容: {target_cell.text}")
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
@@ -73,8 +66,8 @@ if uploaded_excel:
     st.success(f"成功读取 {len(df)} 条数据")
 
     required_cols = set()
-    for v in FIELD_MAP.values():
-        if isinstance(v, str) and not v.startswith("="):
+    for v in FIELD_ORDER:
+        if isinstance(v, str) and v and not v.startswith("="):
             required_cols.add(v)
         elif isinstance(v, tuple):
             required_cols.update(v)
