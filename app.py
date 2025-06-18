@@ -13,7 +13,7 @@ FILL_MAP = {
     (3, 4): ("FOB Point", "FOB NB"),
     (4, 4): "=today()",
     (5, 1): "ITEM#",
-    (8, 1): "Item Description"
+    (8, 2): "Item Description"
 }
 
 def fill_label_table(table, data_row):
