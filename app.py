@@ -33,12 +33,13 @@ def fill_label_table(table, data_row):
         else:
             value = str(data_row.get(source, ""))
 
-        for p in target_cell.paragraphs:
-            target_cell._element.remove(p._element)
-        new_paragraph = target_cell.add_paragraph()
-        run = new_paragraph.add_run(value)
-        run.font.color.rgb = RGBColor(0, 0, 0)
-        run.font.size = Pt(10)
+        if target_cell.paragraphs:
+            para = target_cell.paragraphs[0]
+            run = para.runs[0] if para.runs else para.add_run()
+            run.text = value
+        else:
+            para = target_cell.add_paragraph()
+            run = para.add_run(value)
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
