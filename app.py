@@ -35,11 +35,28 @@ def fill_label_table(table, data_row):
 
         if target_cell.paragraphs:
             para = target_cell.paragraphs[0]
-            run = para.runs[0] if para.runs else para.add_run()
-            run.text = value
+            if para.runs:
+                base_run = para.runs[0]
+                base_run.text = value  # 替换文字
+            else:
+                base_run = para.add_run(value)
+
+            # 强制继承字体样式或设默认
+            if base_run.font:
+                base_run.font.name = base_run.font.name or 'Arial'
+                base_run.font.size = base_run.font.size or Pt(10)
+
+                # 中文字体兼容
+                from docx.oxml.ns import qn
+                if base_run._element.rPr is not None:
+                    base_run._element.rPr.rFonts.set(qn('w:eastAsia'), base_run.font.name)
         else:
             para = target_cell.add_paragraph()
             run = para.add_run(value)
+            run.font.name = 'Arial'
+            run.font.size = Pt(10)
+            from docx.oxml.ns import qn
+            run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
