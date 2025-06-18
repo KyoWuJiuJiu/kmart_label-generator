@@ -13,7 +13,7 @@ FILL_MAP = {
     (3, 4): ("FOB Point", "FOB NB"),
     (4, 4): "=today()",
     (5, 1): "ITEM#",
-    (8, 2): "Item Description"
+    (7, 2): "Item Description"
 }
 
 def fill_label_table(table, data_row):
@@ -55,7 +55,7 @@ def fill_label_table(table, data_row):
             # 强制继承字体样式或设默认
             if base_run.font:
                 base_run.font.name = base_run.font.name or 'Arial'
-                base_run.font.size = base_run.font.size or Pt(7)
+                base_run.font.size = base_run.font.size or Pt(6.5)
                 base_run.font.bold = True
 
                 # 中文字体兼容
