@@ -8,48 +8,37 @@ import os
 import copy
 import re
 
-FIELD_ORDER = [
-    "",                                 # Supplier - static text
-    "Assortment Breakdown",             # No. of assort.
-    "",                                 # CGA Merchandiser
-    ("FOB Point", "FOB NB"),            # FOB port / price
-    "",                                 # Order No.
-    "",                                 # FF due date
-    "ITEM#",                            # Item No
-    "=today()",                         # Sample send date
-    "",                                 # Keycode
-    "",                                 # Sample Status
-    "Item Description",                 # Description
-    ""                                  # Sample Purpose / Remarks
-]
+FILL_MAP = {
+    (2, 3): "Assortment Breakdown",
+    (3, 3): ("FOB Point", "FOB NB"),
+    (4, 3): "=today()",
+    (4, 1): "ITEM#",
+    (5, 1): "Item Description"
+}
 
 def fill_label_table(table, data_row):
-    field_idx = 0
-    for row in table.rows:
-        for vi in [1, 3]:  # Fill column 2 and 4
-            if len(row.cells) <= vi:
-                continue
-            target_cell = row.cells[vi]
-            if field_idx >= len(FIELD_ORDER):
-                continue
-            source = FIELD_ORDER[field_idx]
-            field_idx += 1
-            if source == "":
-                continue  # skip empty mapping
-            if source == "=today()":
-                value = str(date.today())
-            elif isinstance(source, tuple):
-                values = [str(data_row.get(col, "")) for col in source]
-                value = " / ".join(values)
-            else:
-                value = str(data_row.get(source, ""))
+    for (ri, ci), source in FILL_MAP.items():
+        if ri >= len(table.rows):
+            continue
+        row = table.rows[ri]
+        if ci >= len(row.cells):
+            continue
+        target_cell = row.cells[ci]
 
-            for p in target_cell.paragraphs:
-                target_cell._element.remove(p._element)
-            new_paragraph = target_cell.add_paragraph()
-            run = new_paragraph.add_run(value)
-            run.font.color.rgb = RGBColor(0, 0, 0)
-            run.font.size = Pt(10)
+        if source == "=today()":
+            value = str(date.today())
+        elif isinstance(source, tuple):
+            values = [str(data_row.get(col, "")) for col in source]
+            value = " / ".join(values)
+        else:
+            value = str(data_row.get(source, ""))
+
+        for p in target_cell.paragraphs:
+            target_cell._element.remove(p._element)
+        new_paragraph = target_cell.add_paragraph()
+        run = new_paragraph.add_run(value)
+        run.font.color.rgb = RGBColor(0, 0, 0)
+        run.font.size = Pt(10)
 
 def duplicate_table_to_new_section(doc, table):
     from docx.oxml import OxmlElement
@@ -68,7 +57,7 @@ if uploaded_excel:
     st.success(f"成功读取 {len(df)} 条数据")
 
     required_cols = set()
-    for v in FIELD_ORDER:
+    for v in FILL_MAP.values():
         if isinstance(v, str) and v and not v.startswith("="):
             required_cols.add(v)
         elif isinstance(v, tuple):
