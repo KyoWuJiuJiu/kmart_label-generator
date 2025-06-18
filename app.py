@@ -9,7 +9,7 @@ import copy
 import re
 
 FILL_MAP = {
-    (2, 3): "Assortment Breakdown",
+    (2, 4): "Assortment Breakdown",
     (3, 3): ("FOB Point", "FOB NB"),
     (4, 3): "=today()",
     (4, 1): "ITEM#",
