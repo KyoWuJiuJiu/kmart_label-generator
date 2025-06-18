@@ -10,10 +10,10 @@ import re
 
 FILL_MAP = {
     (2, 4): "Assortment Breakdown",
-    (3, 3): ("FOB Point", "FOB NB"),
-    (4, 3): "=today()",
-    (4, 1): "ITEM#",
-    (5, 1): "Item Description"
+    (3, 4): ("FOB Point", "FOB NB"),
+    (4, 4): "=today()",
+    (5, 1): "ITEM#",
+    (8, 1): "Item Description"
 }
 
 def fill_label_table(table, data_row):
