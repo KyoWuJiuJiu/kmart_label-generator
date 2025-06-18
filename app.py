@@ -11,7 +11,7 @@ import re
 FILL_MAP = {
     (2, 4): "Assortment Breakdown",
     (3, 4): ("FOB Point", "FOB NB"),
-    (4, 4): "=today()",
+    (5, 4): "=today()",
     (5, 1): "ITEM#",
     (7, 2): "Item Description"
 }
