@@ -31,9 +31,11 @@ def fill_label_table(table, data_row):
             values = []
             for col in source:
                 cell_value = data_row.get(col, "")
-                if isinstance(cell_value, float) and cell_value.is_integer():
-                    cell_value = str(int(cell_value))
-                values.append(str(cell_value))
+                if isinstance(cell_value, (int, float)):
+                    cell_value = f"${cell_value:.2f}"
+                else:
+                    cell_value = str(cell_value)
+                values.append(cell_value)
             value = " / ".join(values)
         else:
             cell_value = data_row.get(source, "")
