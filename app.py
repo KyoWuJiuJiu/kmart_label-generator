@@ -45,6 +45,7 @@ def fill_label_table(table, data_row):
             if base_run.font:
                 base_run.font.name = base_run.font.name or 'Arial'
                 base_run.font.size = base_run.font.size or Pt(7)
+                base_run.font.bold = True
 
                 # 中文字体兼容
                 from docx.oxml.ns import qn
@@ -55,6 +56,7 @@ def fill_label_table(table, data_row):
             run = para.add_run(value)
             run.font.name = 'Arial'
             run.font.size = Pt(7)
+            run.font.bold = True
             from docx.oxml.ns import qn
             run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
 
